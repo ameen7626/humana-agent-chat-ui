@@ -529,6 +529,11 @@ export function Thread() {
                       </div>
                     </form>
                   </div>
+                  {chatStarted && (
+                    <p className="text-xs text-center text-gray-500 -mt-14">
+                      Agent Chat can make mistakes. Check important info.
+                    </p>
+                  )}
                 </div>
               }
             />

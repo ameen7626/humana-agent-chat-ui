@@ -22,9 +22,45 @@ function ContentCopyable({
 }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const copyToClipboard = async (text: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // Continue to fallback below.
+      }
+    }
+
+    if (typeof document === "undefined") return false;
+
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+
+    textarea.focus();
+    textarea.select();
+    let successful = false;
+    try {
+      successful = document.execCommand("copy");
+    } catch (err) {
+      successful = false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+
+    return successful;
+  };
+
+  const handleCopy = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(content);
+    const success = await copyToClipboard(content);
+    if (!success) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
