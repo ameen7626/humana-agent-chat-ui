@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "2024:3000"
+    # volumes:
+    #   - ./src:/app/src
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Enables polling for file changes
+    command: pnpm dev
